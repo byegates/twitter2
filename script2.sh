@@ -59,13 +59,19 @@ pip install mysqlclient==2.1.1
 
 
 
+# Setup temp folders in your virtual machine for pycharm to use later
+mkdir -p ~/pycharm
+mkdir -p ~/pycharm/$PROJECT_FOLDER
 
 # init twitter project
-cd ~/Home/Desktop
+cd ~/Home
+mkdir -p github
+cd github
 mkdir -p $PROJECT_FOLDER
 cd $PROJECT_FOLDER
-django-admin startproject twitter .
 
+# Init your django app named twitter in current directory
+django-admin startproject twitter .
 
 # 设置mysql的root账户的密码为yourpassword
 # 创建名为twitter的数据库
