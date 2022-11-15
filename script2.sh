@@ -11,10 +11,14 @@ cyan='\033[0;36m'
 clear='\033[0m'
 
 # Project Folder name
-PROJECT_FOLDER=test
-# PROJECT_FOLDER=twitter
+PROJECT_FOLDER=twitter
 
+if [ $# -gt 0 ]; then
+  echo "${green}Argument provided, testing mode${clear}"
+ PROJECT_FOLDER=test
+fi
 
+echo "Project Folder will be named: ${PROJECT_FOLDER}"
 
 echo ''
 echo "START!!!"
