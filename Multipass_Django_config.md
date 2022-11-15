@@ -60,13 +60,15 @@ touch ~/.ssh/cloud-init.yaml
 %HOMEPATH%/.ssh/cloud-init.yaml
 ```
 
-## 6. 
+## 6. 用vim更新cloud-init.yaml配置文件
+if you know what you are doing, you can use other means too
 ```shell
 vi ~/.ssh/cloud-init.yaml
 ```
 
 
-## 7. 把下面的内容放到新建的~/.ssh/cloud-init.yaml 文件里面, 把最后一行从ssh-rsa 到 ubuntu整个string换成前面第四部保存的你的public key
+## 7. 给配置文件添加内容
+把下面的内容放到新建的~/.ssh/cloud-init.yaml 文件里面, 把最后一行从ssh-rsa 到 ubuntu整个string换成前面第四部保存的你的public key
 users:
   - default
   - name: ubuntu
@@ -74,12 +76,14 @@ users:
     ssh_authorized_keys:
     - ssh-rsa XXXXB3NzaC1yc2EDDDDDAQABEEEBgQDAWGOpqPsQn4Kmus3QStWnI5OF3X4fkJYB3tTBi93WSuzCjVFEDlrSE2CRGQq38cc9hmLFFuVgj+Xpl3POkaavHyunxTcN7Ytza6ZD/hTP7IgDuo0RqySd3EjHy1e9IUdaDddYTtPR+7d2E51r9rjUq8toEUikNXgEprp45sjH6s3ZDgoRdjs8QU590fchvzDgVgCnPd9JVq4ai3XbkM1s8cTd5fsx75iKZwkv6QjzCG1/U5PKles+AVBE4WdZ5GoEPtV4YKvxWd9lUNgO9bYI3vrX9lBHXyVy2kVWLiynBstkAQcMpgKp8hj6H6VrBFkjRA4CrmrEvFijki+iNSf37NWXRawOPNh00x/lsdmjat8AkCCgEdWwZptTTOZ1PVbpHFfL3h7hk9noXtwNJtGbDpUGtQ2iSg1F27NzwZzeehTBKCrxApcKRUkDIz2eW8KV90Q0Twzi37rZsIxoQpfX7+Q8mri5kvh9PRCGy3neG8wR3OQzyhNUgTjDsbC5YOc= ubuntu
 
-## 8. 让multipass 新建一个叫lts2204的虚拟机, 操作系统版本是22.04(ubuntu), 使用你刚才创建的~/.ssh/cloud-init.yaml文件来配置(之后有用!)
+## 8. 下载镜像，用你的配置文件创建新的虚拟机
+让multipass 新建一个叫lts2204的虚拟机, 操作系统版本是22.04(ubuntu), 使用你刚才创建的~/.ssh/cloud-init.yaml文件来配置(之后有用!)
 ```shell
 multipass launch 22.04 --name lts2204 --cloud-init ~/.ssh/cloud-init.yaml
 ```
 
-## 9. 用multipass看一下你刚才创建成功的虚拟机, 把ip地址记下来(每个人可能不一样)
+## 9. 检查结果
+用multipass看一下你刚才创建成功的虚拟机, 把ip地址记下来(每个人可能不一样)
 ```shell
 multipass list
 ```
