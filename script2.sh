@@ -64,7 +64,9 @@ mkdir -p ~/pycharm
 mkdir -p ~/pycharm/$PROJECT_FOLDER
 
 # init twitter project
-cd ~/Home/Desktop
+cd ~/Home
+mkdir -p github
+cd github
 mkdir -p $PROJECT_FOLDER
 cd $PROJECT_FOLDER
 
