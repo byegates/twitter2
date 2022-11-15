@@ -256,7 +256,8 @@ printf "$script" | python manage.py shell
 ```
 
 ## 23. 更改你项目文件下面的twitter文件夹里面的settings.py文件
-把你的虚拟机ip地址⚠️⚠️⚠️是你的地址不要抄下面的, 加入到下面的allowed hosts里面
+把你的虚拟机ip地址(⚠️⚠️⚠️是你的地址不要抄下面的), 加入到更改你项目文件下面的twitter文件夹里面的settings.py的allowed hosts里面
+#### ⚠️⚠️⚠️its a string, quote it
 ```shell
 ALLOWED_HOSTS = ['192.168.64.1']
 ```
