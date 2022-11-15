@@ -12,10 +12,11 @@ homebrew?
 reter to their [website](https://multipass.run/install)
 
 ## 2. check multipass (use multipass find)
-output
+输入命令
 ```shell
 multipass find
 ```
+output should be similar to below
 ```shell
 Image                       Aliases           Version          Description
 18.04                       bionic            20221014         Ubuntu 18.04 LTS
@@ -71,7 +72,7 @@ users:
   - name: ubuntu
     sudo: ALL=(ALL) NOPASSWD:ALL
     ssh_authorized_keys:
-    - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDAWGOpqPsQn4Kmus2WAtWnI5OF3X4fkJYB3tTBi93IWuzCjVMEDlrSI2CRNQq38cc9hmLFFuVgj+Xpl3POkaavEyunxTcN7Ytza6ZL/hTP7IgDuo0RqySd3EjHy1e9IUdaDddYTtPR+7d2E51r9rjUq8toEUikNXgEprp45sjH6s3ZDgoRdjs8QU590fchvzDgVgCnPd9JVq4ai3XbkM1s8cTd5fsx75iKZwkv6QjzCG1/U5PKles+AVBE4WdZ5GoEPtV4YKvxWd9lUNgO9bYI3vrX9lBHXyVy2kVWLiynBstkAQcMpgKp8hj6H6VrBFkjRA4CrmrEvFijki+iNSf37NWXRawOPNh00x/lsdmjat8AkCCgEdWwZptTTOZ1PVbpHFfL3h7hk9noXtwNJtGbDpUGtQ2iSg1F27NzwZzeehTBKCrxApcKRUkDIz2eW8KV90Q0Twzi37rZsIxoQpfX7+Q8mri5kvh9PRCGy3neG8wR3OQzyhNUgTjDsbC5YOc= ubuntu
+    - ssh-rsa XXXXB3NzaC1yc2EDDDDDAQABEEEBgQDAWGOpqPsQn4Kmus3QStWnI5OF3X4fkJYB3tTBi93WSuzCjVFEDlrSE2CRGQq38cc9hmLFFuVgj+Xpl3POkaavHyunxTcN7Ytza6ZD/hTP7IgDuo0RqySd3EjHy1e9IUdaDddYTtPR+7d2E51r9rjUq8toEUikNXgEprp45sjH6s3ZDgoRdjs8QU590fchvzDgVgCnPd9JVq4ai3XbkM1s8cTd5fsx75iKZwkv6QjzCG1/U5PKles+AVBE4WdZ5GoEPtV4YKvxWd9lUNgO9bYI3vrX9lBHXyVy2kVWLiynBstkAQcMpgKp8hj6H6VrBFkjRA4CrmrEvFijki+iNSf37NWXRawOPNh00x/lsdmjat8AkCCgEdWwZptTTOZ1PVbpHFfL3h7hk9noXtwNJtGbDpUGtQ2iSg1F27NzwZzeehTBKCrxApcKRUkDIz2eW8KV90Q0Twzi37rZsIxoQpfX7+Q8mri5kvh9PRCGy3neG8wR3OQzyhNUgTjDsbC5YOc= ubuntu
 
 ## 8. 让multipass 新建一个叫lts2204的虚拟机, 操作系统版本是22.04(ubuntu), 使用你刚才创建的~/.ssh/cloud-init.yaml文件来配置(之后有用!)
 ```shell
