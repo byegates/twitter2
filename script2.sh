@@ -2,6 +2,7 @@
 
 # Color variables
 red='\033[0;31m'
+bold_red='\033[1;31m'
 green='\033[0;32m'
 yellow='\033[0;33m'
 blue='\033[0;34m'
@@ -14,15 +15,12 @@ clear='\033[0m'
 PROJECT_FOLDER=twitter
 
 if [ $# -gt 0 ]; then
-  echo "${green}Argument provided, testing mode${clear}"
-  PROJECT_FOLDER=test
+  printf "${green}Argument provided, testing mode${clear}\n"
+  PROJECT_FOLDER=$1
 fi
 
-echo "Project Folder will be named: ${PROJECT_FOLDER}"
-
-echo ''
-echo "START!!!"
-echo ''
+printf "\nProject Folder will be named: ${cyan}${PROJECT_FOLDER}${clear}\n\n"
+printf "\n${magenta}START!! ${clear}️ ⚠️ ⚠️ ⚠️ \n\n"
 
 
 sudo apt-get update
@@ -43,7 +41,7 @@ if [ ! -f "/usr/bin/pip" ]; then
  sudo apt-get install -y python-setuptools
  # sudo ln -s /usr/bin/pip3 /usr/bin/pip
 else
- echo "pip3 已安装"
+ printf "${cyan}pip3${clear} ${green}已安装${clear}\n"
 fi
 
 
@@ -66,18 +64,24 @@ pip install mysqlclient==2.1.1
 # Setup temp folders in your virtual machine for pycharm to use later
 mkdir -p ~/pycharm
 mkdir -p ~/pycharm/$PROJECT_FOLDER
+printf "\nWorking directory for pycharm: ${green}$PROJECT_FOLDER${clear} in ${green}~/pycharm${clear} (on ubuntu, only)\n\n"
+printf "$green"
 ls ~/pycharm
+printf "$clear\n"
 
 # init twitter project
-cd ~/Home
-mkdir -p github
-cd github
-mkdir -p $PROJECT_FOLDER
+mkdir -p ~/Home/github
+mkdir -p ~/Home/github$PROJECT_FOLDER
+printf "\nProject folder: ${green}$PROJECT_FOLDER${clear} created in ${green}~/Home/github${clear} (on ubuntu, on your mac it will be under: ~/github\n\n"
+printf "$green"
 ls ~/Home/github
-cd $PROJECT_FOLDER
+printf "$clear\n"
+cd ~/Home/github/$PROJECT_FOLDER
 
 # Init your django app named twitter in current directory
+# django-admin startproject twitter ~/Home/github/$PROJECT_FOLDER
 django-admin startproject twitter .
+ls ~/Home/github/$PROJECT_FOLDER
 
 # 设置mysql的root账户的密码为yourpassword
 # 创建名为twitter的数据库
@@ -90,7 +94,12 @@ EOF
 # fi
 
 # 1st round ORM creation
-python manage.py migrate
+# python ~/Home/github/$PROJECT_FOLDER/manage.py migrate
+python manage.py migrate # Must migrate before below superuser setup script, otherwise that script will fail
+printf "What's currently in project folder:\n\n"
+printf "$green"
+ls ~/Home/github/$PROJECT_FOLDER
+printf "$clear\n"
 
 # setup superuser (admin:admin 😂😂😂)
 # superuser名字
@@ -111,25 +120,18 @@ if not User.objects.filter(username=username).exists():
 else:
     print('Superuser creation skipped.');
 "
+# printf "$script" | python ~/Home/github/$PROJECT_FOLDER/manage.py shell
+printf "$cyan"
 printf "$script" | python manage.py shell
+printf "$clear\n"
 
-
-# 2nd round
-python manage.py migrate
-
-echo ''
-echo '⚠️ ⚠️ ⚠️ '
-echo ''
-echo '4 more steps to go!'
-echo ''
-echo "⚠️  1. Run below command:"
-echo "    'source ~/.virtualenvs/twitter2/bin/activate'"
-echo "    To activate your virtual environment"
-echo ''
-echo "⚠️  2. modify twitter/settings.py file at two places:"
-echo "    2.1 Add your virtual machine ip to ALLOWED_HOSTS like: ALLOWED_HOSTS = ['192.168.64.6']"
-echo "    2.2 Replace DATABASES in the file as below:"
-echo ''
+printf '\n⚠️ ⚠️ ⚠️ \n'
+printf "\n${bold_red}4${clear} more steps to go!\n\n"
+printf "⚠️  ${magenta}1${clear}. At terminal run: '${green}source${clear} ${cyan}~/.virtualenvs/$PROJECT_FOLDER/bin/activate${clear}' to activate your virtual environment\n"
+printf "⚠️  ${magenta}1.1${clear}. At terminal run: '${green}cd${clear} ${cyan}~/Home/github/$PROJECT_FOLDER${clear}' to go to your project folder(if not already in it)\n\n"
+printf "⚠️  ${magenta}2${clear}. modify twitter/settings.py file at two places:\n"
+printf "    ${magenta}2.1${clear} Add your virtual machine ip to ALLOWED_HOSTS like: ALLOWED_HOSTS = [$cyan'192.168.64.6'$clear]\n"
+printf "    ${magenta}2.2${clear} Replace DATABASES in the file as below:\n\n"
 cat << EOM
 DATABASES = {
     'default': {
@@ -142,14 +144,9 @@ DATABASES = {
     }
 }
 EOM
-echo ''
-echo "⚠️  3. Try 'python manage.py runserver 0.0.0.0:8000' to start your web app!"
-echo ''
-echo "⚠️  4. Go to your Browser, use your virtual machine ip with port 8000(e.g.: '192.168.64.2:8000') to view your web app!"
-echo ''
-echo '⚠️ ⚠️ ⚠️ '
-echo ''
+printf "\n"
+printf "⚠️  ${magenta}3${clear}. At terminal run '${cyan}python manage.py runserver 0.0.0.0:8000${clear}' to start your web app!\n\n"
+printf "⚠️  ${magenta}4${clear}. Go to your Browser, use your virtual machine ip with port 8000(e.g.: '${cyan}192.168.64.${red}2$cyan:8000$clear') to view your web app!\n\n"
+printf '⚠️ ⚠️ ⚠️ \n\n'
 
-echo ''
-echo "END!!!🏅️🏅️🏅"
-echo ''
+printf "\n${green}END!!!${clear}🏅️🏅️🏅\n\n"
