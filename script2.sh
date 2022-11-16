@@ -15,7 +15,7 @@ PROJECT_FOLDER=twitter
 
 if [ $# -gt 0 ]; then
   echo "${green}Argument provided, testing mode${clear}"
- PROJECT_FOLDER=test
+  PROJECT_FOLDER=test
 fi
 
 echo "Project Folder will be named: ${PROJECT_FOLDER}"
@@ -50,8 +50,8 @@ fi
 # for convenience
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.10 2
 # create virtual env
-python -m venv ~/.virtualenvs/twitter2
-source ~/.virtualenvs/twitter2/bin/activate
+python -m venv ~/.virtualenvs/$PROJECT_FOLDER
+source ~/.virtualenvs/$PROJECT_FOLDER/bin/activate
 
 # 安装pip etc. 最新版
 pip install -U pip # setuptools wrapt
@@ -66,12 +66,14 @@ pip install mysqlclient==2.1.1
 # Setup temp folders in your virtual machine for pycharm to use later
 mkdir -p ~/pycharm
 mkdir -p ~/pycharm/$PROJECT_FOLDER
+ls ~/pycharm
 
 # init twitter project
 cd ~/Home
 mkdir -p github
 cd github
 mkdir -p $PROJECT_FOLDER
+ls ~/Home/github
 cd $PROJECT_FOLDER
 
 # Init your django app named twitter in current directory

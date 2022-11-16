@@ -68,7 +68,7 @@ cat ~/.ssh/$INIT_FILE # ${green}${clear}
 echo ""
 
 echo ""
-echo "⚠️  Launching a new VM with version ubuntu 22.04LTS, named ${cyan}$VM_NAME${clear}, using ~/.ssh/$INIT_FILE ⚠️"
+echo "⚠️  Launching a new VM with version ${magenta}ubuntu 22.04LTS${clear}, named ${cyan}$VM_NAME${clear}, using ${cyan}~/.ssh/$INIT_FILE${clear} ⚠️"
 echo ""
 
 # NODE=test2204b;multipass stop $NODE;multipass delete $NODE;multipass purge
