@@ -81,7 +81,10 @@ cd ~/Home/github/$PROJECT_FOLDER
 # Init your django app named twitter in current directory
 # django-admin startproject twitter ~/Home/github/$PROJECT_FOLDER
 django-admin startproject twitter .
+printf "\nWhat's currently in project folder:\n\n"
+printf "$green"
 ls ~/Home/github/$PROJECT_FOLDER
+printf "$clear\n"
 
 # 设置mysql的root账户的密码为yourpassword
 # 创建名为twitter的数据库
@@ -96,7 +99,7 @@ EOF
 # 1st round ORM creation
 # python ~/Home/github/$PROJECT_FOLDER/manage.py migrate
 python manage.py migrate # Must migrate before below superuser setup script, otherwise that script will fail
-printf "What's currently in project folder:\n\n"
+printf "\nWhat's currently in project folder:\n\n"
 printf "$green"
 ls ~/Home/github/$PROJECT_FOLDER
 printf "$clear\n"
@@ -129,7 +132,7 @@ printf '\n⚠️ ⚠️ ⚠️ \n'
 printf "\n${bold_red}4${clear} more steps to go!\n\n"
 printf "⚠️  ${magenta}1${clear}. At terminal run: '${green}source${clear} ${cyan}~/.virtualenvs/$PROJECT_FOLDER/bin/activate${clear}' to activate your virtual environment\n"
 printf "⚠️  ${magenta}1.1${clear}. At terminal run: '${green}cd${clear} ${cyan}~/Home/github/$PROJECT_FOLDER${clear}' to go to your project folder(if not already in it)\n\n"
-printf "⚠️  ${magenta}2${clear}. modify twitter/settings.py file at two places:\n"
+printf "⚠️  ${magenta}2${clear}. modify ${green}twitter/settings.py${clear} file at two places:\n"
 printf "    ${magenta}2.1${clear} Add your virtual machine ip to ALLOWED_HOSTS like: ALLOWED_HOSTS = [$cyan'192.168.64.6'$clear]\n"
 printf "    ${magenta}2.2${clear} Replace DATABASES in the file as below:\n\n"
 cat << EOM
