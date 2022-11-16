@@ -64,16 +64,23 @@ pip install mysqlclient==2.1.1
 # Setup temp folders in your virtual machine for pycharm to use later
 mkdir -p ~/pycharm
 mkdir -p ~/pycharm/$PROJECT_FOLDER
+printf "\nWorking directory for pycharm: ${green}$PROJECT_FOLDER${clear} in ${green}~/pycharm${clear} (on ubuntu, only)\n\n"
+printf "$green"
 ls ~/pycharm
+printf "$clear\n"
 
 # init twitter project
 mkdir -p ~/Home/github
 mkdir -p ~/Home/github$PROJECT_FOLDER
+printf "\nProject folder: ${green}$PROJECT_FOLDER${clear} created in ${green}~/Home/github${clear} (on ubuntu, on your mac it will be under: ~/github\n\n"
+printf "$green"
 ls ~/Home/github
+printf "$clear\n"
 cd ~/Home/github/$PROJECT_FOLDER
 
 # Init your django app named twitter in current directory
-django-admin startproject twitter ~/Home/github/$PROJECT_FOLDER
+# django-admin startproject twitter ~/Home/github/$PROJECT_FOLDER
+django-admin startproject twitter .
 ls ~/Home/github/$PROJECT_FOLDER
 
 # 设置mysql的root账户的密码为yourpassword
@@ -87,8 +94,12 @@ EOF
 # fi
 
 # 1st round ORM creation
-python ~/Home/github/$PROJECT_FOLDER/manage.py migrate
+# python ~/Home/github/$PROJECT_FOLDER/manage.py migrate
+python manage.py migrate # Must migrate before below superuser setup script, otherwise that script will fail
+printf "What's currently in project folder:\n\n"
+printf "$green"
 ls ~/Home/github/$PROJECT_FOLDER
+printf "$clear\n"
 
 # setup superuser (admin:admin 😂😂😂)
 # superuser名字
@@ -109,12 +120,13 @@ if not User.objects.filter(username=username).exists():
 else:
     print('Superuser creation skipped.');
 "
-printf "$script" | python ~/Home/github/$PROJECT_FOLDER/manage.py shell
+# printf "$script" | python ~/Home/github/$PROJECT_FOLDER/manage.py shell
+printf "$cyan"
+printf "$script" | python manage.py shell
+printf "$clear\n"
 
-printf "\n"
-printf '⚠️ ⚠️ ⚠️ \n'
-printf "\n"
-printf "${bold_red}4${clear} more steps to go!\n\n"
+printf '\n⚠️ ⚠️ ⚠️ \n'
+printf "\n${bold_red}4${clear} more steps to go!\n\n"
 printf "⚠️  ${magenta}1${clear}. At terminal run: '${green}source${clear} ${cyan}~/.virtualenvs/$PROJECT_FOLDER/bin/activate${clear}' to activate your virtual environment\n"
 printf "⚠️  ${magenta}1.1${clear}. At terminal run: '${green}cd${clear} ${cyan}~/Home/github/$PROJECT_FOLDER${clear}' to go to your project folder(if not already in it)\n\n"
 printf "⚠️  ${magenta}2${clear}. modify twitter/settings.py file at two places:\n"
