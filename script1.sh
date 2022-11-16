@@ -10,9 +10,7 @@ cyan='\033[0;36m'
 # Clear the color after that
 clear='\033[0m'
 
-echo ''
-echo "${magenta}START!!!${clear}"
-echo ''
+printf "\n${magenta}START!! ${clear}️ ⚠️ ⚠️ ⚠️ \n\n"
 
 # testing file names
 KEY_NAME="multipass-ssh-key"
@@ -20,14 +18,14 @@ CLOUD_INIT=cloud-init
 VM_NAME=lts2204
 
 if [ $# -gt 0 ]; then
-  echo "${green}Argument provided, testing mode${clear}"
-  KEY_NAME="multitest-ssh-key"
-  CLOUD_INIT=test-init
-  VM_NAME=test2204
+  printf "${green}Argument provided, testing mode${clear}\n"
+#  KEY_NAME="multitest-ssh-key"
+#  CLOUD_INIT=test-init
+  VM_NAME=$1
 fi
-echo "${green} KEY_NAME${clear}: ${cyan}$KEY_NAME${clear}"
-echo "${green}INIT_NAME${clear}: ${cyan}$CLOUD_INIT${clear}"
-echo "${green}  VM_NAME${clear}: ${cyan}$VM_NAME${clear}"
+printf "${green} KEY_NAME${clear}: ${cyan}$KEY_NAME${clear}\n"
+printf "${green}INIT_NAME${clear}: ${cyan}$CLOUD_INIT${clear}\n"
+printf "${green}  VM_NAME${clear}: ${cyan}$VM_NAME${clear}\n"
 INIT_FILE=$CLOUD_INIT.yaml
 
 # create the folder only if it doesn't exist
@@ -35,20 +33,15 @@ mkdir -p ~/.ssh
 
 # create ssh key, without override existing, below 2 liens are the same, only keeping 1
 # to be added to ~/.ssh/authorized_keys on VM later
-echo ""
-echo "Creating SSH KEY, if exists, will skip (not overwrite)"
-echo ""
-# echo "n"|ssh-keygen -C ubuntu -b 2048 -t rsa -f ~/.ssh/$KEY_NAME -q -N ""
+printf "\nCreating SSH KEY, if exists, will skip (not overwrite)\n\n"
+# printf "n"|ssh-keygen -C ubuntu -b 2048 -t rsa -f ~/.ssh/$KEY_NAME -q -N ""
 ssh-keygen -C ubuntu -b 2048 -t rsa -f ~/.ssh/$KEY_NAME -q -N "" <<< n
-echo ""
-echo ""
-echo "SSH-KEY created(or existing) ${cyan}~/.ssh/$KEY_NAME${clear} & ${cyan}~/.ssh/$KEY_NAME.pub${clear} will be used"
+printf "\n\nSSH-KEY created(or existing) ${cyan}~/.ssh/$KEY_NAME${clear} & ${cyan}~/.ssh/$KEY_NAME.pub${clear} will be used\n"
 
 # Generate cloud-init.yaml config file
-echo ""
-echo "⚠️  Creating ${magenta}~/.ssh/$INIT_FILE${clear} config file⚠️"
+printf "\n⚠️  Creating ${magenta}~/.ssh/$INIT_FILE${clear} config file⚠️\n"
 PUBKEY=$(cat ~/.ssh/$KEY_NAME.pub)
-echo ""
+printf "\n"
 
 cat > ~/.ssh/$INIT_FILE <<- EOM
 users:
@@ -60,48 +53,38 @@ users:
 EOM
 
 
-echo ""
-echo "${magenta}~/.ssh/$INIT_FILE${clear} ${green}created${clear}(😄?) as below:"
-echo ""
+printf "\n"
+printf "${magenta}~/.ssh/$INIT_FILE${clear} ${green}created${clear}(😄?) as below:\n\n"
 
 cat ~/.ssh/$INIT_FILE # ${green}${clear}
-echo ""
+printf "\n"
 
-echo ""
-echo "⚠️  Launching a new VM with version ${magenta}ubuntu 22.04LTS${clear}, named ${cyan}$VM_NAME${clear}, using ${cyan}~/.ssh/$INIT_FILE${clear} ⚠️"
-echo ""
+printf "\n"
+printf "⚠️  Launching a new VM with version ${magenta}ubuntu 22.04LTS${clear}, named ${cyan}$VM_NAME${clear}, using ${cyan}~/.ssh/$INIT_FILE${clear} ⚠️\n\n"
 
 # NODE=test2204b;multipass stop $NODE;multipass delete $NODE;multipass purge
-echo "${green}multipass${clear} stop ${cyan}$VM_NAME${clear}"
-echo ''
+printf "${green}multipass${clear} stop ${cyan}$VM_NAME${clear}\n\n"
 multipass stop $VM_NAME
-echo "${green}multipass${clear} delete ${cyan}$VM_NAME${clear}"
-echo ''
+printf "${green}multipass${clear} delete ${cyan}$VM_NAME${clear}\n\n"
 multipass delete $VM_NAME
-echo "${green}multipass${clear} purge"
-echo ''
+printf "${green}multipass${clear} purge\n\n"
 multipass purge
-echo "${green}multipass${clear} launch ${magenta}22.04${clear} --name ${cyan}$VM_NAME${clear} --cloud-init ${cyan}~/.ssh/$INIT_FILE${clear}"
-echo ''
+printf "${green}multipass${clear} launch ${magenta}22.04${clear} --name ${cyan}$VM_NAME${clear} --cloud-init ${cyan}~/.ssh/$INIT_FILE${clear}\n\n"
 multipass launch 22.04 --name $VM_NAME --cloud-init ~/.ssh/$INIT_FILE
 
-echo ''
-echo "👀 your running Virtual Machines:"
+printf "\n"
+printf "👀 your running Virtual Machines:\n"
 nodes_list=$(multipass list)
-echo $nodes_list
-ip_addr=$(echo $nodes_list | grep "$VM_NAME " | grep -oE '\d+\.\d+\.\d+\.\d+')
+printf $nodes_list
+ip_addr=$(printf $nodes_list | grep "$VM_NAME " | grep -oE '\d+\.\d+\.\d+\.\d+')
 
-echo ''
-echo 'Use below command:'
-echo ''
-echo "'${magenta}ssh${clear} ubuntu@${green}$ip_addr${clear} -i ${cyan}~/.ssh/$KEY_NAME${clear} -o StrictHostKeyChecking=no'"
-echo ''
-echo 'to connect to the virtual machine you just created!🏅️'
+printf "\n"
+printf 'Use below command:\n\n'
+printf "'${magenta}ssh${clear} ubuntu@${green}$ip_addr${clear} -i ${cyan}~/.ssh/$KEY_NAME${clear} -o StrictHostKeyChecking=no'\n\n"
+printf 'to connect to the virtual machine you just created!🏅️\n'
 
-echo ''
-echo "Mounting your home folder to ${magenta}/home/ubuntu/Home${clear} on Virtual Node: ${cyan}$VM_NAME${clear}"
+printf "\n"
+printf "Mounting your home folder to ${magenta}/home/ubuntu/Home${clear} on Virtual Node: ${cyan}$VM_NAME${clear}\n"
 multipass mount $HOME $VM_NAME:Home
 
-echo ''
-echo "${green}END!!!${clear}🏅️🏅️🏅"
-echo ''
+printf "\n${green}END!!!${clear}🏅️🏅️🏅\n\n"
