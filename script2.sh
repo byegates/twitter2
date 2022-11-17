@@ -24,7 +24,7 @@ printf "\n${magenta}START!! ${clear}️ ⚠️ ⚠️ ⚠️ \n\n"
 
 
 sudo apt-get update
-# it looks like below are no longer required
+# Not longer required for 22.04
 # sudo snap install bare
 # sudo snap install multipass-sshfs
 
