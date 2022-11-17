@@ -74,7 +74,7 @@ mkdir -p ~/Home/github
 mkdir -p ~/Home/github$PROJECT_FOLDER
 printf "\nProject folder: ${green}$PROJECT_FOLDER${clear} created in ${green}~/Home/github${clear} (on ubuntu, on your mac it will be under: ~/github\n\n"
 printf "$green"
-ls ~/Home/github
+ls -lsa ~/Home/github
 printf "$clear\n"
 cd ~/Home/github/$PROJECT_FOLDER
 
@@ -83,7 +83,8 @@ cd ~/Home/github/$PROJECT_FOLDER
 django-admin startproject twitter .
 printf "\nWhat's currently in project folder:\n\n"
 printf "$green"
-ls ~/Home/github/$PROJECT_FOLDER
+curl -sSL -o .gitignore https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore
+ls -lsa ~/Home/github/$PROJECT_FOLDER
 printf "$clear\n"
 
 # 设置mysql的root账户的密码为yourpassword

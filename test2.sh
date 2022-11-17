@@ -22,7 +22,6 @@ fi
 printf "\nProject Folder will be named: ${cyan}${PROJECT_FOLDER}${clear}\n\n"
 printf "\n${magenta}START!! ${clear}️ ⚠️ ⚠️ ⚠️ \n\n"
 
-
 sudo apt-get install tree
 
 # Setup temp folders in your virtual machine for pycharm to use later
@@ -38,7 +37,7 @@ mkdir -p ~/Home/github
 mkdir -p ~/Home/github$PROJECT_FOLDER
 printf "\nProject folder: ${green}$PROJECT_FOLDER${clear} created in ${green}~/Home/github${clear} (on ubuntu, on your mac it will be under: ~/github\n\n"
 printf "$green"
-ls ~/Home/github
+ls -lsa ~/Home/github
 printf "$clear\n"
 cd ~/Home/github/$PROJECT_FOLDER
 
@@ -46,7 +45,8 @@ cd ~/Home/github/$PROJECT_FOLDER
 # django-admin startproject twitter ~/Home/github/$PROJECT_FOLDER
 printf "\nWhat's currently in project folder:\n\n"
 printf "$green"
-ls ~/Home/github/$PROJECT_FOLDER
+curl -sSL -o .gitignore https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore
+ls -lsa ~/Home/github/$PROJECT_FOLDER
 printf "$clear\n"
 
 printf '\n⚠️ ⚠️ ⚠️ \n'
