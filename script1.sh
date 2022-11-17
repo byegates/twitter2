@@ -82,6 +82,7 @@ printf $nodes_list
 ip_addr=$(printf $nodes_list | grep "$VM_NAME " | grep -oE '\d+\.\d+\.\d+\.\d+')
 
 printf "\nMounting your home folder to ${magenta}/home/ubuntu/Home${clear} on Virtual Node: ${cyan}$VM_NAME${clear}\n"
+multipass set local.privileged-mounts=Yes # just in case
 multipass mount $HOME $VM_NAME:Home
 
 printf "\n🏅Open a new terminal to run: '${green}ssh ubuntu@${magenta}$ip_addr ${green}-i ~/.ssh/$KEY_NAME -o StrictHostKeyChecking=no${clear}' to ssh into your new VM"
