@@ -1,17 +1,30 @@
-# Steps
-## install multipass
-### Mac
+# Setup Django App with multipass 
+
+## Note for windows users
+Before you start,download a good terminal that runs shell like [cmder full version](https://github.com/cmderdev/cmder/releases/download/v1.3.20/cmder.zip), for detail, check their [website](https://cmder.app/).
+
+## 1. install multipass
+Windows/linux users go to 1.2 directly
+### 1.1a Install homebrew
+This is for better install experience of multipass and more (if you already have it, skip)
+
+open your terminal, execute below command
+```shell
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+if any issue with installing brew, you can also skip 1.1b, go to 1.1c to install multipass manually
+### 1.1b install multipass with brew
 ```shell
 brew install --cask multipass
 ```
+after this go to step 2
+### 1.1c install multipass manually
 If you don't have brew or don't know what brew is, go to their [website](https://multipass.run/install).
 
-homebrew?
-
-### Windows/Linux
+### 1.2 Windows/Linux
 reter to their [website](https://multipass.run/install)
 
-## 2. check multipass (use multipass find)
+## 1.3. Verify you installed multipass successfully
 输入命令
 ```shell
 multipass find
@@ -28,20 +41,23 @@ docker                                        latest           A Docker environm
 jellyfin                                      latest           Jellyfin is a Free Software Media System that puts you in control of managing and streaming your media.
 minikube                                      latest           minikube is local Kubernetes
 ```
-## 3. run script1.sh
-### mac
-make it executable first
+## 2. run first script
 ```shell
-sudo chmod 777 script1.sh
+# curl -L -o script1.sh 'https://raw.githubusercontent.com/byegates/twitter2/main/script1.sh'
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/byegates/twitter2/main/script1.sh)" | tee script1.txt
 ```
 run it
 ```shell
 ./script1.sh
 ```
-script1会给你ssh 进入虚拟机的完整命令并带有虚拟机的ip地址，存下来，会经常需要用
+⚠️⚠️⚠️script1会给你ssh 进入虚拟机的完整命令并带有虚拟机的ip地址，存下来，会经常需要用⚠️⚠️⚠️
 
+## 3. run second script
+First script will tell you how to run second script, if you follow that instruction, you don't need rest of this doc. Below are additional references.
+## ⚠️⚠️⚠️Below are optional⚠️⚠️⚠️
+⚠️⚠️⚠️You can stop here⚠️⚠️⚠️
 ## 4. 用ssh加密协议登陆你的ubuntu虚拟机
-前面存下来的命令(如下), 把'192.168.64.4'换成你的lts2204虚拟机对应的ip地址⚠️⚠️⚠️否则ip不对，命令会卡住，timeout
+前面存下来的命令(example如下), 把'**192.168.64.4**'⚠️⚠️⚠️**换成你的lts2204虚拟机对应的ip地址**⚠️⚠️⚠️否则ip不对，命令会卡住，timeout
 ```shell
 ssh ubuntu@192.168.64.4 -i ~/.ssh/multipass-ssh-key -o StrictHostKeyChecking=no
 ```
@@ -58,6 +74,9 @@ ls Home/Desktop
 ```
 第一个output应该是你整个home 文件夹，第二个显示你的Desktop
 ### Mac 权限问题
+#### 更好的解决权限问题的方式
+前面的script会默认在你的Mac home folder创建一个叫做github的文件夹，然后你的项目都在这里面创建，不用Desktop之类的文件夹就不会有权限问题
+#### 旧solution
 Mac上可能会碰到没有权限的问题, 如果上面命令显示permission denied就说明有权限问题。
 去system preference 里面的 security & privacy 里面的 full disk access 给multipassd和terminal 勾选☑️上，会要求你重启terminal，就重启一下。
 ### 重启完了terminal 怎么进入刚才的虚拟机?
@@ -71,17 +90,9 @@ multipass set local.privileged-mounts=Yes # for windows only
 
 ## 6. 执行script2.sh
 安装必要的软件包，更新，初始化你的项目
-<pre>
-!script2.sh 要在虚拟机里面执行! 放到一个虚拟机可以访问到的文件夹，进入那个文件夹
-默认项目会被创建在 ~/Desktop/twitter 文件夹
-</pre>
-不要忘记先设置可执行权限
 ```shell
-sudo chmod 777 script1.sh
-```
-然后执行
 ```shell
-./script2.sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/byegates/twitter2/main/script2.sh)" | tee script2.txt
 ```
 ## 7. script2会告诉你还有四步
 按照说明走完那四步
