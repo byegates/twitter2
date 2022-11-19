@@ -83,7 +83,7 @@ cd ~/Home/github/$PROJECT_FOLDER
 django-admin startproject twitter .
 printf "\nWhat's currently in project folder:\n\n"
 printf "$green"
-curl -sSL -o .gitignore https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore
+curl -sSL -o .gitignore https://raw.githubusercontent.com/byegates/twitter2/main/.gitignore
 ls -lsa ~/Home/github/$PROJECT_FOLDER
 printf "$clear\n"
 
