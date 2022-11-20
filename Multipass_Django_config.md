@@ -53,11 +53,19 @@ run it
 ⚠️⚠️⚠️script1会给你ssh 进入虚拟机的完整命令并带有虚拟机的ip地址，存下来，会经常需要用⚠️⚠️⚠️
 
 ## 3. run second script
-First script will tell you how to run second script, if you follow that instruction, you don't need rest of this doc. Below are additional references.
-## ⚠️⚠️⚠️Below are optional⚠️⚠️⚠️
-⚠️⚠️⚠️You can stop here⚠️⚠️⚠️
+⚠️⚠️⚠️script1 output也会告诉你怎么run第二个script, just follow the instruction⚠️⚠️⚠️
+Basically, it looks like this:
+```shell
+bash script2.sh
+```
+如果找不到script2.sh 这个文件, run 下面的命令(先下载，再执行)
+```shell
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/byegates/twitter2/main/script2.sh)" | tee script2.txt
+```
+## More (optional) Info
+⚠️You can stop here⚠️
 ## 4. 用ssh加密协议登陆你的ubuntu虚拟机
-前面存下来的命令(example如下), 把'**192.168.64.4**'⚠️⚠️⚠️**换成你的lts2204虚拟机对应的ip地址**⚠️⚠️⚠️否则ip不对，命令会卡住，timeout
+前面存下来的命令(example如下), 把'**192.168.64.4**'⚠️**换成你的虚拟机(lts2204)对应的ip地址**⚠️否则ip不对，命令会卡住，timeout
 ```shell
 ssh ubuntu@192.168.64.4 -i ~/.ssh/multipass-ssh-key -o StrictHostKeyChecking=no
 ```
