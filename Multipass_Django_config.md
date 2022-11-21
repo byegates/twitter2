@@ -129,8 +129,8 @@ DATABASES = {
 }
 ```
 ### 7.3 可以尝试性的跑一下了!
-```shell
 # ⚠️⚠️⚠️in ubuntu terminal⚠️⚠️⚠️, enter below.
+```shell
 python manage.py runserver 0.0.0.0:8000&
 ```
 ### 7.4 访问你刚运行起来的网站
