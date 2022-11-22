@@ -71,7 +71,7 @@ printf "$clear\n"
 
 # init twitter project
 mkdir -p ~/Home/github
-mkdir -p ~/Home/github$PROJECT_FOLDER
+mkdir -p ~/Home/github/$PROJECT_FOLDER
 printf "\nProject folder: ${green}$PROJECT_FOLDER${clear} created in ${green}~/Home/github${clear} (on ubuntu, on your mac it will be under: ~/github\n\n"
 printf "$green"
 ls -lsa ~/Home/github
