@@ -20,13 +20,11 @@ if [ $# -gt 0 ]; then
 fi
 
 printf "\nProject Folder will be named: ${cyan}${PROJECT_FOLDER}${clear}\n\n"
-printf "\n${magenta}START!! ${clear}️ ⚠️ ⚠️ ⚠️ \n\n"
+printf "\n${magenta}START!! ${clear}... ⚠️ ⚠️ ⚠️ \n\n"
 
 
 sudo apt-get update
-# Not longer required for 22.04
-# sudo snap install bare
-# sudo snap install multipass-sshfs
+sudo apt-get upgrade
 
 # for virtual env setup
 sudo apt-get install python3.10-venv
@@ -39,7 +37,6 @@ sudo apt-get install -y libmysqlclient-dev
 if [ ! -f "/usr/bin/pip" ]; then
  sudo apt-get install -y python3-pip
  sudo apt-get install -y python-setuptools
- # sudo ln -s /usr/bin/pip3 /usr/bin/pip
 else
  printf "${cyan}pip3${clear} ${green}已安装${clear}\n"
 fi
@@ -53,6 +50,7 @@ source ~/.virtualenvs/$PROJECT_FOLDER/bin/activate
 
 # 安装pip etc. 最新版
 pip install -U pip # setuptools wrapt
+pip install -U pip
 pip install django==4.1.3
 pip install mysqlclient==2.1.1
 # check python executable path
@@ -141,7 +139,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'twitter',
-        'HOST': 'localhost',
+        'HOST': '0.0.0.0',
         'PORT': '3306',
         'USER': 'root',
         'PASSWORD': 'yourpassword',
