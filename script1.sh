@@ -66,20 +66,17 @@ printf "\n"
 
 printf "\n⚠️  Launching a new VM with version ${magenta}ubuntu 22.04LTS${clear}, named ${cyan}$VM_NAME${clear}, using ${cyan}~/.ssh/$INIT_FILE${clear} ⚠️\n\n"
 
-# NODE=test2204b;multipass stop $NODE;multipass delete $NODE;multipass purge
-printf "${green}multipass${clear} stop ${cyan}$VM_NAME${clear}\n\n"
-multipass stop $VM_NAME
-printf "${green}multipass${clear} delete ${cyan}$VM_NAME${clear}\n\n"
+printf "${green}multipass${clear} delete ${cyan}$VM_NAME${clear};${green}multipass${clear} purge\n\n"
 multipass delete $VM_NAME
-printf "${green}multipass${clear} purge\n\n"
 multipass purge
+
 printf "${green}multipass${clear} launch ${magenta}22.04${clear} --name ${cyan}$VM_NAME${clear} --cloud-init ${cyan}~/.ssh/$INIT_FILE${clear}\n\n"
 multipass launch 22.04 --name $VM_NAME --cloud-init ~/.ssh/$INIT_FILE
 
 printf "\n👀 your running Virtual Machines(use '${green}multipass list${clear}' command):\n"
-nodes_list=$(multipass list)
-printf $nodes_list
-ip_addr=$(printf $nodes_list | grep "$VM_NAME " | grep -oE '\d+\.\d+\.\d+\.\d+')
+multipass list
+ip_addr=$(multipass list | grep "$VM_NAME " | grep -oE '\d+\.\d+\.\d+\.\d+')
+printf "ip of your VM: $ip_addr\n"
 
 printf "\nMounting your home folder to ${magenta}/home/ubuntu/Home${clear} on Virtual Node: ${cyan}$VM_NAME${clear}\n"
 multipass set local.privileged-mounts=Yes # just in case

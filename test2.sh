@@ -20,7 +20,7 @@ if [ $# -gt 0 ]; then
 fi
 
 printf "\nProject Folder will be named: ${cyan}${PROJECT_FOLDER}${clear}\n\n"
-printf "\n${magenta}START!! ${clear}️ ⚠️ ⚠️ ⚠️ \n\n"
+printf "\n${magenta}START!! ${clear}... ⚠️ ⚠️ ⚠️ \n\n"
 
 sudo apt-get install tree
 
