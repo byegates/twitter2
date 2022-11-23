@@ -74,7 +74,7 @@ printf "${green}multipass${clear} launch ${magenta}22.04${clear} --name ${cyan}$
 
 printf "\n👀 your running Virtual Machines(use '${green}multipass list${clear}' command):\n"
 multipass list
-ip_addr=$(multipass list | grep "$VM_NAME " | grep -oE '\d+\.\d+\.\d+\.\d+')
+ip_addr=$(multipass list | grep "$VM_NAME " | grep -Eo "([0-9]{1,3}[\.]){3}[0-9]{1,3}")
 printf "ip of your VM: $ip_addr\n"
 
 
