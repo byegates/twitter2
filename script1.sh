@@ -75,7 +75,7 @@ multipass launch 22.04 --name $VM_NAME --cloud-init ~/.ssh/$INIT_FILE
 
 printf "\n👀 your running Virtual Machines(use '${green}multipass list${clear}' command):\n"
 multipass list
-ip_addr=$(multipass list | grep "$VM_NAME " | grep -oE '\d+\.\d+\.\d+\.\d+')
+ip_addr=$(multipass list | grep "$VM_NAME " | grep -Eo "([0-9]{1,3}[\.]){3}[0-9]{1,3}")
 printf "ip of your VM: $ip_addr\n"
 
 printf "\nMounting your home folder to ${magenta}/home/ubuntu/Home${clear} on Virtual Node: ${cyan}$VM_NAME${clear}\n"
