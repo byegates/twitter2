@@ -34,7 +34,7 @@ printf "$clear\n"
 
 # init twitter project
 mkdir -p ~/Home/github
-mkdir -p ~/Home/github$PROJECT_FOLDER
+mkdir -p ~/Home/github/$PROJECT_FOLDER
 printf "\nProject folder: ${green}$PROJECT_FOLDER${clear} created in ${green}~/Home/github${clear} (on ubuntu, on your mac it will be under: ~/github\n\n"
 printf "$green"
 ls -lsa ~/Home/github
@@ -45,32 +45,44 @@ cd ~/Home/github/$PROJECT_FOLDER
 # django-admin startproject twitter ~/Home/github/$PROJECT_FOLDER
 printf "\nWhat's currently in project folder:\n\n"
 printf "$green"
-curl -sSL -o .gitignore https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore
+# curl -sSL -o .gitignore https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore
 ls -lsa ~/Home/github/$PROJECT_FOLDER
 printf "$clear\n"
+
+ipv4=$(hostname -I | grep -Eo "([0-9]{1,3}[\.]){3}[0-9]{1,3}")
+
+INPUT_FILE=twitter/settings.py
+# sed -i "s/ALLOWED_HOSTS = \[\'${ipv4}\'\]/ALLOWED_HOSTS = \[\]/g" "${INPUT_FILE}"
+# ls $INPUT_FILE*
+printf "\nAdding your VM ip${cyan}${ipv4}${clear} to ${yellow}ALLOWED_HOSTS${clear} in ${cyan}$INPUT_FILE${clear} file:\n\n"
+cat $INPUT_FILE | grep ALLOWED_HOSTS
+printf " --->\n${red}"
+sed -i'.bkup' "s/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \[\'${ipv4}\'\]/g" "${INPUT_FILE}"
+cat $INPUT_FILE | grep ALLOWED_HOSTS
+printf "${clear}"
+mv $INPUT_FILE.bkup $INPUT_FILE
 
 printf '\n⚠️ ⚠️ ⚠️ \n'
 printf "\n${bold_red}4${clear} more steps to go!\n\n"
 printf "⚠️  ${magenta}1${clear}. At terminal run: '${green}source${clear} ${cyan}~/.virtualenvs/$PROJECT_FOLDER/bin/activate${clear}' to activate your virtual environment\n"
 printf "⚠️  ${magenta}1.1${clear}. At terminal run: '${green}cd${clear} ${cyan}~/Home/github/$PROJECT_FOLDER${clear}' to go to your project folder(if not already in it)\n\n"
-printf "⚠️  ${magenta}2${clear}. modify ${green}twitter/settings.py${clear} file at two places:\n"
-printf "    ${magenta}2.1${clear} Add your virtual machine ip to ALLOWED_HOSTS like: ALLOWED_HOSTS = [$cyan'192.168.64.6'$clear]\n"
-printf "    ${magenta}2.2${clear} Replace DATABASES in the file as below:\n\n"
+printf "⚠️  ${magenta}2${clear}. modify ${green}twitter/settings.py${clear} to Replace ${yellow}DATABASES${clear} in the file as below:\n\n"
+printf "${yellow}"
 cat << EOM
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'twitter',
-        'HOST': 'localhost',
+        'HOST': '0.0.0.0',
         'PORT': '3306',
         'USER': 'root',
         'PASSWORD': 'yourpassword',
     }
 }
 EOM
-printf "\n"
+printf "${clear}\n"
 printf "⚠️  ${magenta}3${clear}. At terminal run '${cyan}python manage.py runserver 0.0.0.0:8000${clear}' to start your web app!\n\n"
-printf "⚠️  ${magenta}4${clear}. Go to your Browser, use your virtual machine ip with port 8000(e.g.: '${cyan}192.168.64.${red}2$cyan:8000$clear') to view your web app!\n\n"
+printf "⚠️  ${magenta}4${clear}. Go to your Browser, enter '${magenta}${ipv4}${clear}:${cyan}8000$clear' to view your web app!\n\n"
 printf '⚠️ ⚠️ ⚠️ \n\n'
 
 printf "\n${green}END!!!${clear}🏅️🏅️🏅\n\n"
