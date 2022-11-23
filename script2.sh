@@ -132,7 +132,7 @@ ipv4=$(hostname -I | grep -Eo "([0-9]{1,3}[\.]){3}[0-9]{1,3}")
 INPUT_FILE=twitter/settings.py
 # sed -i "s/ALLOWED_HOSTS = \[\'${ipv4}\'\]/ALLOWED_HOSTS = \[\]/g" "${INPUT_FILE}"
 # ls $INPUT_FILE*
-printf "\nAdding your VM ip${cyan}${ipv4}${clear} to ${yellow}ALLOWED_HOSTS${clear} in ${cyan}$INPUT_FILE${clear} file:\n\n"
+printf "\nAdding your VM ip: ${cyan}${ipv4}${clear} to ${yellow}ALLOWED_HOSTS${clear} in ${cyan}$INPUT_FILE${clear} file:\n\n"
 cat $INPUT_FILE | grep ALLOWED_HOSTS
 printf " --->\n${red}"
 sed -i'.bkup' "s/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \[\'${ipv4}\'\]/g" "${INPUT_FILE}"
