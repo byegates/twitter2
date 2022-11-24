@@ -52,8 +52,6 @@ source ~/.virtualenvs/$PROJECT_FOLDER/bin/activate
 
 # 安装pip etc. 最新版
 pip install -U pip
-pip install -U pip # for some reason, running it once is not latest?
-
 
 # Setup temp folders in your virtual machine for pycharm to use later
 mkdir -p ~/pycharm
@@ -73,6 +71,7 @@ printf "$clear\n"
 cd ~/Home/github/$PROJECT_FOLDER
 curl -sSL -o requirements.txt https://raw.githubusercontent.com/byegates/twitter2/main/requirements.txt
 pip install -r requirements.txt
+python -m pip install -U pip setuptools wheel
 
 # Init your django app named twitter in current directory
 # django-admin startproject twitter ~/Home/github/$PROJECT_FOLDER
