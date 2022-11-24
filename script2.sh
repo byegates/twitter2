@@ -44,19 +44,15 @@ fi
 
 # for convenience
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.10 2
+# delete virtual env first
+rm -rf ~/.virtualenvs/$PROJECT_FOLDER
 # create virtual env
 python -m venv ~/.virtualenvs/$PROJECT_FOLDER
 source ~/.virtualenvs/$PROJECT_FOLDER/bin/activate
 
 # 安装pip etc. 最新版
-pip install -U pip # setuptools wrapt
 pip install -U pip
-pip install django==4.1.3
-pip install mysqlclient==2.1.1
-# check python executable path
-# import sys, os
-# os.path.dirname(sys.executable)
-
+pip install -U pip # for some reason, running it once is not latest?
 
 
 # Setup temp folders in your virtual machine for pycharm to use later
@@ -75,6 +71,8 @@ printf "$green"
 ls -lsa ~/Home/github
 printf "$clear\n"
 cd ~/Home/github/$PROJECT_FOLDER
+curl -sSL -o requirements.txt https://raw.githubusercontent.com/byegates/twitter2/main/requirements.txt
+pip install -r requirements.txt
 
 # Init your django app named twitter in current directory
 # django-admin startproject twitter ~/Home/github/$PROJECT_FOLDER
