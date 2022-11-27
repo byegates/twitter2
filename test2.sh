@@ -25,7 +25,6 @@ printf "\n${magenta}START!! ${clear}... ⚠️ ⚠️ ⚠️ \n\n"
 sudo apt-get install tree
 
 # Setup temp folders in your virtual machine for pycharm to use later
-mkdir -p ~/pycharm
 mkdir -p ~/pycharm/$PROJECT_FOLDER
 printf "\nWorking directory for pycharm: ${green}$PROJECT_FOLDER${clear} in ${green}~/pycharm${clear} (on ubuntu, only)\n\n"
 printf "$green"
@@ -33,7 +32,6 @@ ls ~/pycharm
 printf "$clear\n"
 
 # init twitter project
-mkdir -p ~/Home/github
 mkdir -p ~/Home/github/$PROJECT_FOLDER
 printf "\nProject folder: ${green}$PROJECT_FOLDER${clear} created in ${green}~/Home/github${clear} (on ubuntu, on your mac it will be under: ~/github\n\n"
 printf "$green"
