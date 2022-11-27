@@ -44,7 +44,6 @@ class NewsFeedApiTests(TestCase):
         response = self.linghu_client.get(NEWSFEEDS_URL)
         self.assertEqual(len(response.data['newsfeeds']), 1)
         # 关注之后可以看到别人发的
-
         self.linghu_client.post(FOLLOW_URL.format(self.dongxie.id))
         response = self.dongxie_client.post(POST_TWEETS_URL, {
             'content': 'Hello Twitter',

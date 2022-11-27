@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'friendships',
     'newsfeeds',
     'comments',
+    'likes',
 ]
 
 REST_FRAMEWORK = {
@@ -131,6 +132,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
+
 USE_TZ = True
 
 
@@ -143,8 +145,6 @@ try:
     from .local_settings import *
 except:
     pass
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
