@@ -3,3 +3,5 @@ mysqlclient==2.1.1
 djangorestframework==3.14.0
 django-filter==22.1
 django-notifications-hq==1.7.0
+django-storages==1.13.1
+boto3==1.26.17
