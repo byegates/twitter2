@@ -31,7 +31,7 @@ sudo apt-get install python3.10-venv
 # useful utility
 sudo apt-get install tree
 # memcached, for later use
-sudo apt-get install memcached libmemcached-tools
+sudo apt-get install memcached libmemcached-tools redis
 
 # mysql related
 sudo apt-get install mysql-server
