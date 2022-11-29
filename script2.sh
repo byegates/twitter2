@@ -30,6 +30,8 @@ sudo apt-get upgrade
 sudo apt-get install python3.10-venv
 # useful utility
 sudo apt-get install tree
+# memcached, for later use
+sudo apt-get install memcached libmemcached-tools
 
 # mysql related
 sudo apt-get install mysql-server
