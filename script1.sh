@@ -10,10 +10,10 @@ cyan='\033[0;36m'
 # Clear the color after that
 clear='\033[0m'
 
-printf "\n${magenta}START!! ${clear}️ ⚠️ ⚠️ ⚠️ \n\n"
+echo -e "\n${magenta}START!! ${clear}️ ⚠️ ⚠️ ⚠️ \n\n"
 
 # testing file names
-KEY_NAME=multipass-ssh-key
+KEY_NAME=id_rsa
 CLOUD_INIT=cloud-init
 VM_NAME=lts2204
 script=script2
@@ -24,10 +24,10 @@ fi
 if [ $# -gt 1 ]; then
   script=$2
 fi
-printf "${green} KEY_NAME${clear}: ${cyan}$KEY_NAME${clear}\n"
-printf "${green}INIT_NAME${clear}: ${cyan}$CLOUD_INIT${clear}\n"
-printf "${green}  VM_NAME${clear}: ${cyan}$VM_NAME${clear}\n"
-printf "${green}   Script${clear}: ${cyan}$script${clear}\n"
+echo -e "${green} KEY_NAME${clear}: ${cyan}$KEY_NAME${clear}"
+echo -e "${green}INIT_NAME${clear}: ${cyan}$CLOUD_INIT${clear}"
+echo -e "${green}  VM_NAME${clear}: ${cyan}$VM_NAME${clear}"
+echo -e "${green}   Script${clear}: ${cyan}$script${clear}"
 INIT_FILE=$CLOUD_INIT.yaml
 
 # create the folder only if it doesn't exist
@@ -35,15 +35,14 @@ mkdir -p ~/.ssh
 
 # create ssh key, without override existing, below 2 liens are the same, only keeping 1
 # to be added to ~/.ssh/authorized_keys on VM later
-printf "\nCreating SSH KEY, if exists, will skip (not overwrite)\n\n"
-# printf "n"|ssh-keygen -C ubuntu -b 2048 -t rsa -f ~/.ssh/$KEY_NAME -q -N ""
+echo -e "\nCreating SSH KEY, No Overwrite\n"
+# echo -e "n"|ssh-keygen -C ubuntu -b 2048 -t rsa -f ~/.ssh/$KEY_NAME -q -N ""
 ssh-keygen -C ubuntu -b 2048 -t rsa -f ~/.ssh/$KEY_NAME -q -N "" <<< n
-printf "\n\nSSH-KEY created(or existing) ${cyan}~/.ssh/$KEY_NAME${clear} & ${cyan}~/.ssh/$KEY_NAME.pub${clear} will be used\n"
+echo -e "\n\nSSH-KEY created(or existing) ${cyan}~/.ssh/$KEY_NAME${clear} & ${cyan}~/.ssh/$KEY_NAME.pub${clear} will be used\n"
 
 # Generate cloud-init.yaml config file
-printf "\n⚠️  Creating ${magenta}~/.ssh/$INIT_FILE${clear} config file⚠️\n"
+echo -e "\n⚠️  Creating ${magenta}~/.ssh/$INIT_FILE${clear} config file⚠️\n"
 PUBKEY=$(cat ~/.ssh/$KEY_NAME.pub)
-printf "\n"
 
 init_script="bash $script.sh | tee $script.txt"
 cat > ~/.ssh/$INIT_FILE <<- EOM
@@ -59,30 +58,31 @@ runcmd:
 - # $init_script
 EOM
 
-printf "\n${magenta}~/.ssh/$INIT_FILE${clear} ${green}created${clear}(😄?) as below:\n\n"
+echo -e "${magenta}~/.ssh/$INIT_FILE${clear} ${green}created${clear}(😄?) as below:\n"
 
-cat ~/.ssh/$INIT_FILE # ${green}${clear}
-printf "\n"
+cat ~/.ssh/$INIT_FILE
 
-printf "\n⚠️  Launching a new VM with version ${magenta}ubuntu 22.04LTS${clear}, named ${cyan}$VM_NAME${clear}, using ${cyan}~/.ssh/$INIT_FILE${clear} ⚠️\n\n"
+echo -e "\n⚠️  Launching a new VM with version ${magenta}ubuntu 22.04LTS${clear}, named ${cyan}$VM_NAME${clear}, using ${cyan}~/.ssh/$INIT_FILE${clear} ⚠️\n"
 
-printf "${green}multipass${clear} delete ${cyan}$VM_NAME${clear};${green}multipass${clear} purge\n\n"
-multipass delete $VM_NAME
-multipass purge
+echo -e "${green}multipass${clear} delete --purge ${cyan}$VM_NAME${clear}\n"
+multipass delete --purge "$VM_NAME"
 
-printf "${green}multipass${clear} launch ${magenta}22.04${clear} --name ${cyan}$VM_NAME${clear} --cloud-init ${cyan}~/.ssh/$INIT_FILE${clear}\n\n"
-multipass launch 22.04 --name $VM_NAME --cloud-init ~/.ssh/$INIT_FILE
+echo -e "${green}multipass${clear} launch ${magenta}22.04${clear} --name ${cyan}$VM_NAME${clear} --cloud-init ${cyan}~/.ssh/$INIT_FILE${clear}\n\n"
+multipass launch 22.04 --name "$VM_NAME" --cloud-init ~/.ssh/$INIT_FILE
 
-printf "\n👀 your running Virtual Machines(use '${green}multipass list${clear}' command):\n"
+echo -e "\n👀 your running Virtual Machines(use '${green}multipass list${clear}' command):\n"
 multipass list
 ip_addr=$(multipass list | grep "$VM_NAME " | grep -Eo "([0-9]{1,3}[\.]){3}[0-9]{1,3}")
-printf "ip of your VM: $ip_addr\n"
+echo -e "\nip of your VM: ${cyan}$ip_addr${clear}\n"
 
-printf "\nMounting your home folder to ${magenta}/home/ubuntu/Home${clear} on Virtual Node: ${cyan}$VM_NAME${clear}\n"
+echo -e "Mounting your home folder to ${magenta}/home/ubuntu/Home${clear} on Virtual Node: ${cyan}$VM_NAME${clear}\n"
+sleep 3
 multipass set local.privileged-mounts=Yes # just in case
-multipass mount $HOME $VM_NAME:Home
+multipass mount "$HOME" "$VM_NAME":Home
+echo -e "\nIf mount failed, run '${cyan}multipass mount $HOME $VM_NAME:Home${clear}' in your ${cyan}Mac/Windows${clear} terminal to mount again\!\n"
 
-printf "\n🏅Open a new terminal to run: '${green}ssh ubuntu@${magenta}$ip_addr ${green}-i ~/.ssh/$KEY_NAME -o StrictHostKeyChecking=no${clear}' to ssh into your new VM"
-printf "\n🥈Then run '${green}${init_script}${clear}' at the ${red}new terminal${clear} of your ${red}new VM${clear}\n\n"
+echo -e "🏅Open a new ${red}terminal Tab${clear}, run: '${green}ssh ubuntu@${magenta}$ip_addr ${green}-i ~/.ssh/$KEY_NAME -o StrictHostKeyChecking=no${clear}' to ssh into your VM"
+echo -e "🥈Then run '${cyan}ls ~/Home${clear}' ${cyan}INSIDE your VM${clear} to verify mount action: You should see lots of folders inside ~/Home\!"
+echo -e "🥉Then run '${green}${init_script}${clear}' at the ${red}new terminal${clear} of your ${red}new VM${clear}"
 
-printf "\n${green}END!!!${clear}🏅️🏅️🏅\n\n"
+echo -e "\n${green}END\!\!\!${clear}🏅️🏅️🏅\n"
