@@ -13,92 +13,131 @@ clear='\033[0m'
 
 # Project Folder name
 PROJECT_FOLDER=twitter
+file_limit=8
+lvl=2
 
 if [ $# -gt 0 ]; then
-  printf "${green}Argument provided, testing mode${clear}\n"
   PROJECT_FOLDER=$1
 fi
 
-printf "\nProject Folder will be named: ${cyan}${PROJECT_FOLDER}${clear}\n\n"
-printf "\n${magenta}START!! ${clear}... ⚠️ ⚠️ ⚠️ \n\n"
+echo -e "\n${magenta}START!! ${clear}... ⚠️ ⚠️ ⚠️ \n"
+echo -e "Project Folder to use: ${cyan}${PROJECT_FOLDER}${clear}\n"
 
+# pull list of latest packages
+sudo apt update
 
-sudo apt-get update
-sudo apt-get upgrade
+# useful utility
+sudo apt install tree
 
 # for virtual env setup
-sudo apt-get install python3.10-venv
-# useful utility
-sudo apt-get install tree
+sudo apt install python3.10-venv
 # memcached, for later use
-sudo apt-get install memcached libmemcached-tools redis
+sudo apt install memcached libmemcached-tools redis
 
 # mysql related
-sudo apt-get install mysql-server
-sudo apt-get install -y libmysqlclient-dev
-if [ ! -f "/usr/bin/pip" ]; then
- sudo apt-get install -y python3-pip
- sudo apt-get install -y python-setuptools
-else
- printf "${cyan}pip3${clear} ${green}已安装${clear}\n"
-fi
+sudo apt install mysql-server
+sudo apt install -y libmysqlclient-dev
 
+if [ ! -f "/usr/bin/pip" ]; then
+ sudo apt install -y python3-pip
+ sudo apt install -y python-setuptools
+else
+ echo -e "${cyan}pip3${clear} ${green}已安装${clear}\n"
+fi
 
 # for convenience
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.10 2
 # delete virtual env first
-rm -rf ~/.virtualenvs/$PROJECT_FOLDER
+echo -e "\nCreating python virtual environment '${cyan}~/.virtualenvs/$PROJECT_FOLDER${clear}':\n\n"
+rm -rf ~/.virtualenvs/"$PROJECT_FOLDER"
 # create virtual env
-python -m venv ~/.virtualenvs/$PROJECT_FOLDER
-source ~/.virtualenvs/$PROJECT_FOLDER/bin/activate
+python -m venv ~/.virtualenvs/"$PROJECT_FOLDER"
+source ~/.virtualenvs/"$PROJECT_FOLDER"/bin/activate
 
 # 安装pip etc. 最新版
-pip install -U pip
-
-# Setup temp folders in your virtual machine for pycharm to use later
-mkdir -p ~/pycharm/$PROJECT_FOLDER
-printf "\nWorking directory for pycharm: ${green}$PROJECT_FOLDER${clear} in ${green}~/pycharm${clear} (on ubuntu, only)\n\n"
-printf "$green"
-ls ~/pycharm
-printf "$clear\n"
-
-# init twitter project
-mkdir -p ~/Home/github/$PROJECT_FOLDER
-printf "\nProject folder: ${green}$PROJECT_FOLDER${clear} created in ${green}~/Home/github${clear} (on ubuntu, on your mac it will be under: ~/github\n\n"
-printf "$green"
-ls -lsa ~/Home/github
-printf "$clear\n"
-cd ~/Home/github/$PROJECT_FOLDER
-curl -sSL -o requirements.txt https://raw.githubusercontent.com/byegates/twitter2/main/requirements.txt
-pip install -r requirements.txt
 python -m pip install -U pip setuptools wheel
 
-# Init your django app named twitter in current directory
-# django-admin startproject twitter ~/Home/github/$PROJECT_FOLDER
-django-admin startproject twitter .
-printf "\nWhat's currently in project folder:\n\n"
-printf "$green"
-curl -sSL -o .gitignore https://raw.githubusercontent.com/byegates/twitter2/main/.gitignore
-ls -lsa ~/Home/github/$PROJECT_FOLDER
-printf "$clear\n"
+# Setup temp folders in your virtual machine for pycharm to use later
+mkdir -p ~/pycharm/"$PROJECT_FOLDER"
+echo -e "\nWorking directory for pycharm: ${green}$PROJECT_FOLDER${clear} in ${green}~/pycharm${clear} (only on ubuntu)\n\n"
+tree -L $lvl --filelimit $file_limit ~/pycharm
+
+# init twitter project
+mkdir -p ~/Home/github/"$PROJECT_FOLDER"
+echo -e "\nProject folder '${green}$PROJECT_FOLDER${clear}' created in ${green}~/Home/github${clear} (${green}~/github${clear} on your mac)\n"
+tree -L $lvl --filelimit $file_limit ~/Home/github/"$PROJECT_FOLDER"
+cd ~/Home/github/"$PROJECT_FOLDER"
+curl -sSL -o requirements.txt https://raw.githubusercontent.com/byegates/twitter2/main/requirements.txt
+pip install -r requirements.txt
 
 # 设置mysql的root账户的密码为yourpassword
 # 创建名为twitter的数据库
+echo -e "\n\n${red}"
 sudo mysql -u root << EOF
   ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'yourpassword';
   flush privileges;
   show databases;
+  SELECT '---------------' as '';
+  SELECT 'Before vs After' as '';
+  SELECT '---------------' as '';
   CREATE DATABASE IF NOT EXISTS twitter;
+  show databases;
 EOF
+echo -e "${clear}"
 # fi
 
-# 1st round ORM creation
-# python ~/Home/github/$PROJECT_FOLDER/manage.py migrate
-python manage.py migrate # Must migrate before below superuser setup script, otherwise that script will fail
-printf "\nWhat's currently in project folder:\n\n"
-printf "$green"
-ls ~/Home/github/$PROJECT_FOLDER
-printf "$clear\n"
+# Init your django app named twitter in current directory
+curl -sSL -o .gitignore https://raw.githubusercontent.com/byegates/twitter2/main/.gitignore
+echo -e "\n\nProject folder before '${cyan}django-admin startproject twitter .${clear}':\n\n"
+tree -L $lvl --filelimit $file_limit ~/Home/github/"$PROJECT_FOLDER"
+
+django-admin startproject twitter .
+
+echo -e "\nProject folder after '${cyan}django-admin startproject twitter .${clear}':\n\n"
+tree -L $lvl --filelimit $file_limit ~/Home/github/"$PROJECT_FOLDER"
+
+ipv4=$(hostname -I | grep -Eo "([0-9]{1,3}[\.]){3}[0-9]{1,3}")
+
+settings_file=twitter/settings.py
+echo -e "\nAdding your VM ip: ${cyan}${ipv4}${clear} to ${yellow}ALLOWED_HOSTS${clear} in ${cyan}$settings_file${clear} file:\n\n"
+< $settings_file grep ALLOWED_HOSTS
+echo -e " --->\n"
+sed -i'.bkup' "s/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \['${ipv4}'\]/g" "${settings_file}"
+< $settings_file grep ALLOWED_HOSTS
+echo -e "\n"
+# mv $settings_file.bkup $settings_file
+
+# Add sql db settings in local_settings
+cat >> twitter/local_settings.py <<- EOM
+# Database
+# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'twitter',
+        'HOST': '0.0.0.0',
+        'PORT': '3306',
+        'USER': 'root',
+        'PASSWORD': 'yourpassword',
+    }
+}
+EOM
+
+# import local settings into settings
+cat >> twitter/settings.py <<- EOM
+
+# local_settings will be ignored in .gitignore file, and configured locally at each environment
+
+try:
+    from .local_settings import *
+except:
+    pass
+EOM
+
+python manage.py migrate
+echo -e "\nProject folder after first ${cyan}migration${clear}:\n\n"
+tree -L $lvl --filelimit $file_limit ~/Home/github/"$PROJECT_FOLDER"
 
 # setup superuser (admin:admin 😂😂😂)
 # superuser名字
@@ -119,45 +158,23 @@ if not User.objects.filter(username=username).exists():
 else:
     print('Superuser creation skipped.');
 "
-# printf "$script" | python ~/Home/github/$PROJECT_FOLDER/manage.py shell
-printf "$cyan"
-printf "$script" | python manage.py shell
-printf "$clear\n"
+echo -e "$cyan\n"
+echo -e "$script" | python manage.py shell
+echo -e "$clear\n"
 
-ipv4=$(hostname -I | grep -Eo "([0-9]{1,3}[\.]){3}[0-9]{1,3}")
 
-INPUT_FILE=twitter/settings.py
-# sed -i "s/ALLOWED_HOSTS = \[\'${ipv4}\'\]/ALLOWED_HOSTS = \[\]/g" "${INPUT_FILE}"
-# ls $INPUT_FILE*
-printf "\nAdding your VM ip: ${cyan}${ipv4}${clear} to ${yellow}ALLOWED_HOSTS${clear} in ${cyan}$INPUT_FILE${clear} file:\n\n"
-cat $INPUT_FILE | grep ALLOWED_HOSTS
-printf " --->\n${red}"
-sed -i'.bkup' "s/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \[\'${ipv4}\'\]/g" "${INPUT_FILE}"
-cat $INPUT_FILE | grep ALLOWED_HOSTS
-printf "${clear}"
-# mv $INPUT_FILE.bkup $INPUT_FILE
+echo -e "\n# User Added\n cd ~/Home/github/$PROJECT_FOLDER" >> ~/.bashrc
 
-printf '\n⚠️ ⚠️ ⚠️ \n'
-printf "\n${bold_red}4${clear} more steps to go!\n\n"
-printf "⚠️  ${magenta}1${clear}. At terminal run: '${green}source${clear} ${cyan}~/.virtualenvs/$PROJECT_FOLDER/bin/activate${clear}' to activate your virtual environment\n"
-printf "⚠️  ${magenta}1.1${clear}. At terminal run: '${green}cd${clear} ${cyan}~/Home/github/$PROJECT_FOLDER${clear}' to go to your project folder(if not already in it)\n\n"
-printf "⚠️  ${magenta}2${clear}. modify ${green}twitter/settings.py${clear} to Replace ${yellow}DATABASES${clear} in the file as below:\n\n"
-printf "${yellow}"
-cat << EOM
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'twitter',
-        'HOST': '0.0.0.0',
-        'PORT': '3306',
-        'USER': 'root',
-        'PASSWORD': 'yourpassword',
-    }
-}
-EOM
-printf "${clear}\n"
-printf "⚠️  ${magenta}3${clear}. At terminal run '${cyan}python manage.py runserver 0.0.0.0:8000${clear}' to start your web app!\n\n"
-printf "⚠️  ${magenta}4${clear}. Go to your Browser, enter '${magenta}${ipv4}${clear}:${cyan}8000$clear' to view your web app!\n\n"
-printf '⚠️ ⚠️ ⚠️ \n\n'
+echo -e "\n⚠️ ⚠️ ⚠️ \n${bold_red}4${clear} more steps to go!\n"
+echo -e "⚠️  ${magenta}1${clear}. ALWAYS ACTIVATE PYTHON VIRTUAL ENV BY RUNNING: '${green}source${clear} ${cyan}~/.virtualenvs/$PROJECT_FOLDER/bin/activate${clear}' before you do anything, MAKE A NOTE!!!"
+echo -e "⚠️  ${magenta}1.1${clear}. Always go to your project folder: '${green}cd${clear} ${cyan}~/Home/github/$PROJECT_FOLDER${clear}' first on ubuntu before you do anything, MAKE A NOTE!!!"
+echo -e "\n⚠️  ${magenta}2${clear}. ${green}twitter/settings.py${clear} was modified to use local_settings.py, which have ${yellow}mysql${clear} configs as below:"
+echo -e "\nWhats changed in ${green}$settings_file${clear} to use the correct IP and local_settings:\n"
+diff $settings_file.bkup $settings_file
+echo -e "\nMYSQL Config in ${green}twitter/local_settings.py${clear}\n${yellow}"
+cat twitter/local_settings.py
+echo -e "${clear}"
+echo -e "⚠️  ${magenta}3${clear}. At terminal run '${cyan}python manage.py runserver 0.0.0.0:8000${clear}' to start your web app!\n"
+echo -e "⚠️  ${magenta}4${clear}. Go to your Browser, enter '${magenta}${ipv4}${clear}:${cyan}8000$clear' to view your web app!\n"
 
-printf "\n${green}END!!!${clear}🏅️🏅️🏅\n\n"
+echo -e "\n${green}END!!!${clear}🏅️🏅️🏅\n\n"
