@@ -6,7 +6,6 @@ from rest_framework.permissions import IsAuthenticated
 from utils.paginations import EndlessPagination
 
 class NewsFeedViewSet(viewsets.GenericViewSet):
-    queryset = NewsFeed.objects.all() # Added to avoid newsfeeds api failure
     permission_classes = [IsAuthenticated]
     pagination_class = EndlessPagination
 

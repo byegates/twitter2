@@ -20,9 +20,6 @@ class FriendshipViewSet(viewsets.GenericViewSet):
     # 因为 detail=True 的 actions 会默认先去调用 get_object() 也就是
     # queryset.filter(pk=1) 查询一下这个 object 在不在
     queryset = User.objects.all()
-    # For POST request, which is how this class supposed to be called, below is not required
-    # But for testing w/ browser, w/o below, you'll get error as browser start with GET, so you can't do POST either
-    serializer_class = FriendshipSerializerForCreate
     # 一般来说，不同的 views 所需要的 pagination 规则肯定是不同的，因此一般都需要自定义
     pagination_class = FriendshipPagination
 
