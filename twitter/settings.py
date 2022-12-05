@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+from kombu import Queue
 from pathlib import Path
 
 import sys
@@ -60,6 +61,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
+    'EXCEPTION_HANDLER': 'utils.ratelimit.exception_handler',
 }
 
 MIDDLEWARE = [
@@ -106,6 +108,9 @@ DATABASES = {
         'PASSWORD': 'yourpassword',    # 这里是自己下载mysql时候输入两次的那个密码
     }
 }
+
+# HBase Database
+HBASE_HOST = '127.0.0.1'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -187,6 +192,12 @@ CACHES = {
         'TIMEOUT': 86400,
         'KEY_PREFIX': 'testing',
     },
+    'ratelimit': {
+        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
+        'LOCATION': '127.0.0.1:11211',
+        'TIMEOUT': 86400 * 7,
+        'KEY_PREFIX': 'rl',
+    },
 }
 
 # Redis
@@ -197,6 +208,22 @@ REDIS_PORT = 6379
 REDIS_DB = 0 if TESTING else 1
 REDIS_KEY_EXPIRE_TIME = 7 * 86400  # in seconds
 REDIS_LIST_LENGTH_LIMIT = 1000 if not TESTING else 20
+
+# Celery Configuration Options
+# 使用如下命令把 worker 进程（只执行异步任务的进程，可以在不同的机器上）单独跑起来
+#   celery -A twitter worker -l INFO
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/2' if not TESTING else 'redis://127.0.0.1:6379/0'
+CELERY_TIMEZONE = "UTC"
+CELERY_TASK_ALWAYS_EAGER = TESTING
+CELERY_QUEUES = (
+    Queue('default', routing_key='default'),
+    Queue('newsfeeds', routing_key='newsfeeds'),
+)
+
+# Rate Limiter
+RATELIMIT_USE_CACHE = 'ratelimit'
+RATELIMIT_CACHE_PREFIX = 'rl:'   # 避免和其他的 key 冲突
+RATELIMIT_ENABLE = not TESTING  # 在某些环境下，比如内部测试等环境下，一般也会关掉
 
 
 try:

@@ -1,4 +1,6 @@
+from django.utils.decorators import method_decorator
 from newsfeeds.services import NewsFeedService
+from django_ratelimit.decorators import ratelimit
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -26,6 +28,7 @@ class TweetViewSet(viewsets.GenericViewSet):
             return [AllowAny()]
         return [IsAuthenticated()]
 
+    @method_decorator(ratelimit(key='user_or_ip', rate='5/s', method='GET', block=True))
     def retrieve(self, request, *args, **kwargs):
         # <HOMEWORK 1> 通过某个 query 参数 with_all_comments 来决定是否需要带上所有 comments
         # <HOMEWORK 2> 通过某个 query 参数 with_preview_comments 来决定是否需要带上前三条 comments
@@ -38,6 +41,8 @@ class TweetViewSet(viewsets.GenericViewSet):
     @required_params(params=['user_id'])
     def list(self, request, *args, **kwargs):
         user_id = request.query_params['user_id']
+        tweets = Tweet.objects.filter(user_id=user_id).prefetch_related('user')
+
         cached_tweets = TweetService.get_cached_tweets(user_id)
         page = self.paginator.paginate_cached_list(cached_tweets, request)
         if page is None:
@@ -56,6 +61,8 @@ class TweetViewSet(viewsets.GenericViewSet):
         )
         return self.get_paginated_response(serializer.data)
 
+    @method_decorator(ratelimit(key='user', rate='1/s', method='POST', block=True))
+    @method_decorator(ratelimit(key='user', rate='5/m', method='POST', block=True))
     def create(self, request, *args, **kwargs):
         """
         重载 create 方法，因为需要默认用当前登录用户作为 tweet.user
