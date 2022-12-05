@@ -21,7 +21,11 @@ if [ $# -gt 0 ]; then
 fi
 
 echo -e "\n${magenta}START!! ${clear}... ⚠️ ⚠️ ⚠️ \n"
-echo -e "Project Folder to use: ${cyan}${PROJECT_FOLDER}${clear}\n"
+
+proj_full_path=~/Home/github/"$PROJECT_FOLDER"
+venv_full_path=~/.virtualenvs/"$PROJECT_FOLDER"
+echo -e "Project Folder to use: ${cyan}${proj_full_path}${clear}"
+echo -e "Venv    Folder to use: ${cyan}${venv_full_path}${clear}\n"
 
 # pull list of latest packages
 sudo apt update
@@ -38,6 +42,9 @@ sudo apt install memcached libmemcached-tools redis
 sudo apt install mysql-server
 sudo apt install -y libmysqlclient-dev
 
+# install java for hbase
+sudo apt install openjdk-8-jdk-headless
+
 if [ ! -f "/usr/bin/pip" ]; then
  sudo apt install -y python3-pip
  sudo apt install -y python-setuptools
@@ -48,11 +55,11 @@ fi
 # for convenience
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.10 2
 # delete virtual env first
-echo -e "\nCreating python virtual environment '${cyan}~/.virtualenvs/$PROJECT_FOLDER${clear}':\n\n"
-rm -rf ~/.virtualenvs/"$PROJECT_FOLDER"
+echo -e "\nCreating python virtual environment '${cyan}$venv_full_path${clear}':\n\n"
+rm -rf "$venv_full_path"
 # create virtual env
-python -m venv ~/.virtualenvs/"$PROJECT_FOLDER"
-source ~/.virtualenvs/"$PROJECT_FOLDER"/bin/activate
+python -m venv "$venv_full_path"
+source "$venv_full_path"/bin/activate
 
 # 安装pip etc. 最新版
 python -m pip install -U pip setuptools wheel
@@ -63,10 +70,10 @@ echo -e "\nWorking directory for pycharm: ${green}$PROJECT_FOLDER${clear} in ${g
 tree -L $lvl --filelimit $file_limit ~/pycharm
 
 # init twitter project
-mkdir -p ~/Home/github/"$PROJECT_FOLDER"
+mkdir -p "$proj_full_path"
 echo -e "\nProject folder '${green}$PROJECT_FOLDER${clear}' created in ${green}~/Home/github${clear} (${green}~/github${clear} on your mac)\n"
-tree -L $lvl --filelimit $file_limit ~/Home/github/"$PROJECT_FOLDER"
-cd ~/Home/github/"$PROJECT_FOLDER"
+tree -L $lvl --filelimit $file_limit "$proj_full_path"
+cd "$proj_full_path"
 curl -sSL -o requirements.txt https://raw.githubusercontent.com/byegates/twitter2/main/requirements.txt
 pip install -r requirements.txt
 
@@ -89,12 +96,12 @@ echo -e "${clear}"
 # Init your django app named twitter in current directory
 curl -sSL -o .gitignore https://raw.githubusercontent.com/byegates/twitter2/main/.gitignore
 echo -e "\n\nProject folder before '${cyan}django-admin startproject twitter .${clear}':\n\n"
-tree -L $lvl --filelimit $file_limit ~/Home/github/"$PROJECT_FOLDER"
+tree -L $lvl --filelimit $file_limit "$proj_full_path"
 
 django-admin startproject twitter .
 
 echo -e "\nProject folder after '${cyan}django-admin startproject twitter .${clear}':\n\n"
-tree -L $lvl --filelimit $file_limit ~/Home/github/"$PROJECT_FOLDER"
+tree -L $lvl --filelimit $file_limit "$proj_full_path"
 
 ipv4=$(hostname -I | grep -Eo "([0-9]{1,3}[\.]){3}[0-9]{1,3}")
 
@@ -137,7 +144,7 @@ EOM
 
 python manage.py migrate
 echo -e "\nProject folder after first ${cyan}migration${clear}:\n\n"
-tree -L $lvl --filelimit $file_limit ~/Home/github/"$PROJECT_FOLDER"
+tree -L $lvl --filelimit $file_limit "$proj_full_path"
 
 # setup superuser (admin:admin 😂😂😂)
 # superuser名字
@@ -162,12 +169,24 @@ echo -e "$cyan\n"
 echo -e "$script" | python manage.py shell
 echo -e "$clear\n"
 
+cat >> ~/.bashrc <<- EOM
 
-echo -e "\n# User Added\n cd ~/Home/github/$PROJECT_FOLDER" >> ~/.bashrc
+# User Added
+proj1=$proj_full_path
+cd $proj1
+venv1="$venv_full_path"/bin/activate
+
+echo -e "Use 'source \$venv1' to activate your virtual env first"
+echo -e "Remember to always go to your project folder: \$proj1"
+
+export HBASE_HOME=~/hbase-2.5.2
+export PATH=\$PATH:\$HBASE_HOME/bin
+echo -e "HBASE_HOME set and added to PATH: $HBASE_HOME"
+EOM
 
 echo -e "\n⚠️ ⚠️ ⚠️ \n${bold_red}4${clear} more steps to go!\n"
-echo -e "⚠️  ${magenta}1${clear}. ALWAYS ACTIVATE PYTHON VIRTUAL ENV BY RUNNING: '${green}source${clear} ${cyan}~/.virtualenvs/$PROJECT_FOLDER/bin/activate${clear}' before you do anything, MAKE A NOTE!!!"
-echo -e "⚠️  ${magenta}1.1${clear}. Always go to your project folder: '${green}cd${clear} ${cyan}~/Home/github/$PROJECT_FOLDER${clear}' first on ubuntu before you do anything, MAKE A NOTE!!!"
+echo -e "⚠️  ${magenta}1${clear}. ALWAYS ACTIVATE PYTHON VIRTUAL ENV BY RUNNING: '${green}source${clear} ${cyan}$venv_full_path/bin/activate${clear}' before you do anything, MAKE A NOTE!!!"
+echo -e "⚠️  ${magenta}1.1${clear}. Always go to your project folder: '${green}cd${clear} ${cyan}$proj_full_path${clear}' first on ubuntu before you do anything, MAKE A NOTE!!!"
 echo -e "\n⚠️  ${magenta}2${clear}. ${green}twitter/settings.py${clear} was modified to use local_settings.py, which have ${yellow}mysql${clear} configs as below:"
 echo -e "\nWhats changed in ${green}$settings_file${clear} to use the correct IP and local_settings:\n"
 diff $settings_file.bkup $settings_file

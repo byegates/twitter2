@@ -21,25 +21,56 @@ if [ $# -gt 0 ]; then
 fi
 
 echo -e "\n${magenta}START!! ${clear}... ⚠️ ⚠️ ⚠️ \n"
-echo -e "Project Folder to use: ${cyan}${PROJECT_FOLDER}${clear}\n"
 
+proj_full_path=~/Home/github/"$PROJECT_FOLDER"
+venv_full_path=~/.virtualenvs/"$PROJECT_FOLDER"
+echo -e "Project Folder to use: ${cyan}${proj_full_path}${clear}"
+echo -e "Venv    Folder to use: ${cyan}${venv_full_path}${clear}\n"
+
+# pull list of latest packages
+sudo apt update
+
+# useful utility
 sudo apt install tree
 
-echo -e "\nCreating python virtual environment '${cyan}~/.virtualenvs/$PROJECT_FOLDER${clear}':\n\n"
+echo -e "\nCreating python virtual environment '${cyan}$venv_full_path${clear}':\n\n"
 # Setup temp folders in your virtual machine for pycharm to use later
 mkdir -p ~/pycharm/"$PROJECT_FOLDER"
 echo -e "\nWorking directory for pycharm: ${green}$PROJECT_FOLDER${clear} in ${green}~/pycharm${clear} (only on ubuntu)\n\n"
 tree -L $lvl --filelimit $file_limit ~/pycharm
 
 # init twitter project
-mkdir -p ~/Home/github/"$PROJECT_FOLDER"
+mkdir -p "$proj_full_path"
 echo -e "\nProject folder '${green}$PROJECT_FOLDER${clear}' created in ${green}~/Home/github${clear} (${green}~/github${clear} on your mac)\n"
-tree -L $lvl --filelimit $file_limit ~/Home/github/"$PROJECT_FOLDER"
-cd ~/Home/github/"$PROJECT_FOLDER"
+tree -L $lvl --filelimit $file_limit "$proj_full_path"
+cd "$proj_full_path"
+curl -sSL -o requirements.txt https://raw.githubusercontent.com/byegates/twitter2/main/requirements.txt
+
+# 设置mysql的root账户的密码为yourpassword
+# 创建名为twitter的数据库
+echo -e "\n\n${red}"
+sudo mysql -u root << EOF
+  ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'yourpassword';
+  flush privileges;
+  show databases;
+  SELECT '---------------' as '';
+  SELECT 'Before vs After' as '';
+  SELECT '---------------' as '';
+  CREATE DATABASE IF NOT EXISTS twitter;
+  show databases;
+EOF
+echo -e "${clear}"
+# fi
 
 # Init your django app named twitter in current directory
+curl -sSL -o .gitignore https://raw.githubusercontent.com/byegates/twitter2/main/.gitignore
 echo -e "\n\nProject folder before '${cyan}django-admin startproject twitter .${clear}':\n\n"
-tree -L $lvl --filelimit $file_limit ~/Home/github/"$PROJECT_FOLDER"
+tree -L $lvl --filelimit $file_limit "$proj_full_path"
+
+django-admin startproject twitter .
+
+echo -e "\nProject folder after '${cyan}django-admin startproject twitter .${clear}':\n\n"
+tree -L $lvl --filelimit $file_limit "$proj_full_path"
 
 ipv4=$(hostname -I | grep -Eo "([0-9]{1,3}[\.]){3}[0-9]{1,3}")
 
@@ -51,12 +82,50 @@ sed -i'.bkup' "s/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \['${ipv4}'\]/g" "${settin
 < $settings_file grep ALLOWED_HOSTS
 echo -e "\n"
 mv $settings_file.bkup $settings_file
+echo -e "\nProject folder after first ${cyan}migration${clear}:\n\n"
+tree -L $lvl --filelimit $file_limit "$proj_full_path"
 
-echo -e "\n# User Added\n cd ~/Home/github/$PROJECT_FOLDER" >> ~/.bashrc
+# setup superuser (admin:admin 😂😂😂)
+# superuser名字
+USER="admin"
+# superuser密码
+PASS="admin"
+# superuser邮箱
+MAIL="admin@twitter.com"
+script="
+from django.contrib.auth.models import User;
+
+username = '$USER';
+password = '$PASS';
+email = '$MAIL';
+if not User.objects.filter(username=username).exists():
+    User.objects.create_superuser(username, email, password);
+    print('Superuser created.');
+else:
+    print('Superuser creation skipped.');
+"
+echo -e "$cyan\n"
+echo -e "$script" | python manage.py shell
+echo -e "$clear\n"
+
+cat >> ~/.bashrc <<- EOM
+
+# User Added
+proj1=$proj_full_path
+cd $proj1
+venv1="$venv_full_path"/bin/activate
+
+echo -e "Use 'source \$venv1' to activate your virtual env first"
+echo -e "Remember to always go to your project folder: \$proj1"
+
+export HBASE_HOME=~/hbase-2.5.2
+export PATH=\$PATH:\$HBASE_HOME/bin
+echo -e "HBASE_HOME set and added to PATH: $HBASE_HOME"
+EOM
 
 echo -e "\n⚠️ ⚠️ ⚠️ \n${bold_red}4${clear} more steps to go!\n"
-echo -e "⚠️  ${magenta}1${clear}. ALWAYS ACTIVATE PYTHON VIRTUAL ENV BY RUNNING: '${green}source${clear} ${cyan}~/.virtualenvs/$PROJECT_FOLDER/bin/activate${clear}' before you do anything, MAKE A NOTE!!!"
-echo -e "⚠️  ${magenta}1.1${clear}. Always go to your project folder: '${green}cd${clear} ${cyan}~/Home/github/$PROJECT_FOLDER${clear}' first on ubuntu before you do anything, MAKE A NOTE!!!"
+echo -e "⚠️  ${magenta}1${clear}. ALWAYS ACTIVATE PYTHON VIRTUAL ENV BY RUNNING: '${green}source${clear} ${cyan}$venv_full_path/bin/activate${clear}' before you do anything, MAKE A NOTE!!!"
+echo -e "⚠️  ${magenta}1.1${clear}. Always go to your project folder: '${green}cd${clear} ${cyan}$proj_full_path${clear}' first on ubuntu before you do anything, MAKE A NOTE!!!"
 echo -e "\n⚠️  ${magenta}2${clear}. ${green}twitter/settings.py${clear} was modified to use local_settings.py, which have ${yellow}mysql${clear} configs as below:"
 echo -e "\nWhats changed in ${green}$settings_file${clear} to use the correct IP and local_settings:\n"
 diff $settings_file.bkup $settings_file
